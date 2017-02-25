@@ -1,0 +1,2 @@
+# Renegade Logger Class
+
