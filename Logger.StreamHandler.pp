@@ -35,72 +35,86 @@
 {$mode objfpc}
 {$codepage utf8}
 {$h+}
-{ namespace Renegade.Logger }
-unit Renegade.Logger;
+
+unit Logger.StreamHandler;
 
 interface
 
 uses
   Classes,
   SysUtils,
-  FPJson,
-  Logger.HandlerInterface,
-  Logger.LoggerInterface,
-  Logger.AbstractLogger;
+  Logger.HandlerInterface;
 
 type
-  RTLogger = class(AbstractLogger, LoggerInterface)
+  StreamHandler = class(TObject, LoggingHandlerInterface)
+  private
+    HandlerStream: TStream;
+    StreamIdentifier: UTF8String;
   public
-    constructor Create(Handler: LoggingHandlerInterface);
-    procedure Log(LogLevel: LogLevels; Message: UTF8String;
-      Context: array of const); override;
+    constructor Create(const Stream: TStream); overload;
+    constructor Create(const FileName: UTF8String); overload;
+    destructor Destroy; override;
+    function Open(Identifier: UTF8String): boolean;
+    function Close(): boolean;
+    function Write(const LogData: UTF8String): boolean;
+  published
   end;
 
 implementation
 
-constructor RTLogger.Create(Handler: LoggingHandlerInterface);
+constructor StreamHandler.Create(const Stream: TStream); overload;
 begin
-  LoggingHandler := Handler;
+  inherited Create;
+  HandlerStream := Stream;
 end;
 
-procedure RTLogger.Log(LogLevel: LogLevels; Message: UTF8String;
-  Context: array of const);
-var
-  JsonObject, JsonObjectContext: TJsonObject;
-  JsonArray: TJsonArray;
-  Formatted: UTF8String;
+constructor StreamHandler.Create(const FileName: UTF8String); overload;
 begin
-
-  if Length(Context) <> 0 then
-  begin
-    try
-      JsonObjectContext := TJsonObject.Create(Context);
-      JsonObject := TJsonObject.Create();
-      JsonArray := TJsonArray.Create();
-      JsonArray.Add(JsonObjectContext);
-      JsonObject.Add('Context', JsonObjectContext);
-      JsonObject.CompressedJSON := True;
-    except
-      On e: Exception do
-      begin
-        Destroy;
-      end;
+  inherited Create;
+  try
+    if FileExists(FileName) then
+    begin
+      HandlerStream := TFileStream.Create(FileName, fmOpenWrite);
+    end
+    else
+    begin
+      HandlerStream := TFileStream.Create(FileName, fmCreate);
+    end;
+  except
+    on e: Exception do
+    begin
+      Destroy;
+      HandlerStream.Free;
     end;
   end;
-  LoggingHandler.Open('renegade');
-  if Length(Context) <> 0 then
-  begin
-    Formatted := Format('[%s] %s [%s]', [ConvertLogErrorToString(LogLevel),
-      Message, JsonObject.AsJSON]);
-    LoggingHandler.Write(Formatted);
-  end
-  else
-  begin
-    Formatted := Format('[%s] %s', [ConvertLogErrorToString(LogLevel), Message]);
+end;
 
-    LoggingHandler.Write(Formatted);
-  end;
-  LoggingHandler.Close();
+destructor StreamHandler.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function StreamHandler.Open(Identifier: UTF8String): boolean;
+begin
+  StreamIdentifier := Identifier;
+  Result := True;
+end;
+
+function StreamHandler.Close(): boolean;
+begin
+  // Nothing do be done here.
+  Result := True;
+end;
+
+function StreamHandler.Write(const LogData: UTF8String): boolean;
+var
+  LogMessage: UTF8String;
+  WrittenBytes: longint;
+begin
+  LogMessage := Format('%S[%D] %S'#10#13, [StreamIdentifier, GetProcessId(), LogData]);
+  HandlerStream.Seek(0, soEnd);
+  WrittenBytes := HandlerStream.Write(LogMessage[1], Length(LogMessage));
+  Result := (WrittenBytes > 0);
 end;
 
 end.

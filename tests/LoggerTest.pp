@@ -41,14 +41,18 @@ program LoggerTest;
 uses
   Classes,
   Renegade.Logger,
-  Logger.SysLogHandler;
+  Logger.SysLogHandler,
+  Logger.StreamHandler;
 
 var
-  LogHandler: SysLogHandler;
+  StreamLogHandler : StreamHandler;
   Log: RTLogger;
+  MemoryStream : TMemoryStream;
 begin
-  LogHandler := SysLogHandler.Create(LOG_DAEMON);
-  Log := RTLogger.Create(LogHandler);
+  MemoryStream := TMemoryStream.Create;
+  //StreamLogHandler := StreamHandler.Create('test.log');
+  StreamLogHandler := StreamHandler.Create(MemoryStream);
+  Log := RTLogger.Create(StreamLogHandler);
   Log.Info('Testing', ['File', True, 'Error', True, 'Extended', 'Extend']);
   Log.Debug('Debugging', []);
   Log.Error('Error', []);

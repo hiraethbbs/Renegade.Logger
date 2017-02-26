@@ -7,11 +7,11 @@ Logger class for Free Pascal
 ```pascal
 uses
   Renegade.Logger,
-  { Only handler at the moment
-   Implement Logger.LoggingHandlerInterface 
+  { Implement Logger.LoggingHandlerInterface 
   (Logger.HandlerInterface unit)
    to create your own. }
   Logger.SysLogHandler,
+  // or Logger.StreamHandler,
   //... other units;
 
 var
