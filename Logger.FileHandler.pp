@@ -35,72 +35,45 @@
 {$mode objfpc}
 {$codepage utf8}
 {$h+}
-{ namespace Renegade.Logger }
-unit Renegade.Logger;
+Unit Logger.FileHandler;
 
 interface
 
-uses
+Uses
   Classes,
   SysUtils,
-  FPJson,
   Logger.HandlerInterface,
-  Logger.LoggerInterface,
-  Logger.AbstractLogger;
+  Logger.StreamHandler;
 
-type
-  RTLogger = class(AbstractLogger, LoggerInterface)
-  public
-    constructor Create(Handler: LoggingHandlerInterface);
-    procedure Log(LogLevel: LogLevels; Message: UTF8String;
-      Context: array of const); override;
-  end;
+Type FileHandler = class(StreamHandler, LoggingHandlerInterface)
+    Public
+      constructor Create( const FileName: UTF8String);
+      function Open(Identifier: UTF8String): boolean;
+      function Close(): boolean;
+      function Write(const LogData: UTF8String): boolean;
+end;
 
 implementation
 
-constructor RTLogger.Create(Handler: LoggingHandlerInterface);
+constructor FileHandler.Create( const FileName: UTF8String);
 begin
-  LoggingHandler := Handler;
+  inherited Create(FileName);
 end;
 
-procedure RTLogger.Log(LogLevel: LogLevels; Message: UTF8String;
-  Context: array of const);
-var
-  JsonObject, JsonObjectContext: TJsonObject;
-  JsonArray: TJsonArray;
-  Formatted: UTF8String;
+function FileHandler.Open(Identifier: UTF8String): boolean;
 begin
-
-  if Length(Context) <> 0 then
-  begin
-    try
-      JsonObjectContext := TJsonObject.Create(Context);
-      JsonObject := TJsonObject.Create();
-      JsonArray := TJsonArray.Create();
-      JsonArray.Add(JsonObjectContext);
-      JsonObject.Add('Context', JsonObjectContext);
-      JsonObject.CompressedJSON := True;
-    except
-      On e: Exception do
-      begin
-        FreeAndNil(self);
-      end;
-    end;
-  end;
-  LoggingHandler.Open('renegade');
-  if Length(Context) <> 0 then
-  begin
-    Formatted := Format('[%s] %s [%s]', [ConvertLogErrorToString(LogLevel),
-      Message, JsonObject.AsJSON]);
-    LoggingHandler.Write(Formatted);
-  end
-  else
-  begin
-    Formatted := Format('[%s] %s', [ConvertLogErrorToString(LogLevel), Message]);
-
-    LoggingHandler.Write(Formatted);
-  end;
-  LoggingHandler.Close();
+   Result := inherited Open(Identifier);
 end;
 
-end.
+function FileHandler.Close() : boolean;
+begin
+   Result := inherited Close;
+end;
+
+function FileHandler.Write(const LogData: UTF8String): boolean;
+begin
+    Result := inherited Write(LogData);
+end;
+
+End.
+
