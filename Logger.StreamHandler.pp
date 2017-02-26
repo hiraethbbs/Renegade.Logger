@@ -35,7 +35,12 @@
 {$mode objfpc}
 {$codepage utf8}
 {$h+}
-
+{ namespace Renegade.Logger }
+{ StreamHandler Logger Class }
+{
+  This class should take any TStream decendant and use it to
+  write log messages.
+}
 unit Logger.StreamHandler;
 
 interface

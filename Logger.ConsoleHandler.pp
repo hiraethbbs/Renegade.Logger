@@ -35,6 +35,9 @@
 {$mode objfpc}
 {$codepage utf8}
 {$h+}
+{ namespace Renegade.Logger }
+{ Console Log Handler }
+{ This handler just write messages to the console or terminal. }
 unit Logger.ConsoleHandler;
 
 interface
@@ -46,14 +49,14 @@ uses
 
 type
   ConsoleHandler = class(TObject, LoggingHandlerInterface)
-    Private
-      LogIdentifier : UTF8String;
-    Public
-      constructor Create();
-      destructor Destroy();
-      function Open(Identifier: UTF8String): boolean;
-      function Close(): boolean;
-      function Write(const LogData: UTF8String): boolean;
+  private
+    LogIdentifier: UTF8String;
+  public
+    constructor Create();
+    destructor Destroy();
+    function Open(Identifier: UTF8String): boolean;
+    function Close(): boolean;
+    function Write(const LogData: UTF8String): boolean;
   end;
 
 implementation
@@ -68,9 +71,10 @@ begin
   inherited Destroy;
 end;
 
-function ConsoleHandler.Open(Identifier: UTF8String) : boolean;
+function ConsoleHandler.Open(Identifier: UTF8String): boolean;
 begin
-     LogIdentifier := Identifier;
+  LogIdentifier := Identifier;
+  Result := True;
 end;
 
 function ConsoleHandler.Close(): boolean;
@@ -80,7 +84,7 @@ end;
 
 function ConsoleHandler.Write(const LogData: UTF8String): boolean;
 var
-  LogMessage : UTF8String;
+  LogMessage: UTF8String;
 begin
   LogMessage := Format('%S[%D] %S', [LogIdentifier, GetProcessId(), LogData]);
   Writeln(LogMessage);

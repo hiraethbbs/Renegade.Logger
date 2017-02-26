@@ -36,6 +36,12 @@
 {$codepage utf8}
 {$h+}
 { namespace Renegade.Logger }
+{ The Renegade logger class }
+{
+  This takes a HandlerInterface object to create the method of
+  writing logs. Inspiration was taken from the php psr/3 LoggerInterface.
+  @link https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
+}
 unit Renegade.Logger;
 
 interface
@@ -47,6 +53,7 @@ uses
   Logger.HandlerInterface,
   Logger.LoggerInterface,
   Logger.AbstractLogger;
+
 
 type
   RTLogger = class(AbstractLogger, LoggerInterface)
