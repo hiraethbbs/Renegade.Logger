@@ -86,6 +86,8 @@ begin
     LOG_NOTICE: Result := 'Notice';
     LOG_INFO: Result := 'Info';
     LOG_DEBUG: Result := 'Debug';
+    else
+      Result := 'Unkown';
   end;
 end;
 

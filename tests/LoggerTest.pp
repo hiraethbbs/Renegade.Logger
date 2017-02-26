@@ -42,17 +42,20 @@ uses
   Classes,
   Renegade.Logger,
   Logger.SysLogHandler,
-  Logger.StreamHandler;
+  Logger.StreamHandler,
+  Logger.FileHandler;
 
 var
   StreamLogHandler : StreamHandler;
   Log: RTLogger;
+  LogFileHandler : FileHandler;
   MemoryStream : TMemoryStream;
 begin
-  MemoryStream := TMemoryStream.Create;
+  //MemoryStream := TMemoryStream.Create;
   //StreamLogHandler := StreamHandler.Create('test.log');
-  StreamLogHandler := StreamHandler.Create(MemoryStream);
-  Log := RTLogger.Create(StreamLogHandler);
+  //StreamLogHandler := StreamHandler.Create(MemoryStream);
+  LogFileHandler := FileHandler.Create('test.log');
+  Log := RTLogger.Create(LogFileHandler);
   Log.Info('Testing', ['File', True, 'Error', True, 'Extended', 'Extend']);
   Log.Debug('Debugging', []);
   Log.Error('Error', []);
