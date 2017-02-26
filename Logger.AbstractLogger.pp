@@ -70,6 +70,7 @@ type
     procedure Info(Message: UTF8String; Context: array of const);
     procedure Debug(Message: UTF8String; Context: array of const);
     function ConvertLogErrorToString(LogLevel: LogLevels): ansistring;
+    function ConvertLogStringToError( LogString : AnsiString): LogLevels;
     procedure Log(LogLevel: LogLevels; Message: UTF8String;
       Context: array of const); virtual; abstract;
   published
@@ -93,6 +94,21 @@ begin
     LOG_DEBUG: Result := 'Debug';
     else
       Result := 'Unknown';
+  end;
+end;
+function AbstractLogger.ConvertLogStringToError(LogString : AnsiString) : LogLevels;
+begin
+  case lowerCase(LogString) of
+     'emergency': Result := LOG_EMERG;
+     'alert': Result := LOG_ALERT;
+     'critical': Result := LOG_CRIT;
+     'error': Result := LOG_ERR;
+     'warning': Result := LOG_WARNING;
+     'notice': Result := LOG_NOTICE;
+     'info': Result := LOG_INFO;
+     'debug': Result := LOG_DEBUG;
+  else
+       Result := LOG_UNKNOWN;
   end;
 end;
 

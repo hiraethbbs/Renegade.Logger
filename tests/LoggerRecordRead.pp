@@ -33,43 +33,70 @@
 {  `--- ---'                                            }
 {*******************************************************}
 {$mode objfpc}
+{$h+}
 {$codepage utf8}
 {$packrecords c}
-{$h+}
-
-program LoggerTest;
+{ namespace Renegade.Logger }
+{
+  Program to read data we wrote to renegade.log
+  using Logger.RecordHandler.
+}
+program LoggerRecordRead;
 
 uses
-  Classes,
-  Renegade.Logger,
-  Logger.SysLogHandler,
-  Logger.StreamHandler,
-  Logger.FileHandler,
-  Logger.NullHandler,
-  Logger.ConsoleHandler,
-  Logger.RecordHandler;
+  SysUtils,
+  Classes;
 
+type
+  TLogRecord = record
+    Level: byte;
+    Process: longint;
+    Identifier: string[255];
+    LevelString: string[10];
+    Message: string[255];
+    Context: string[255];
+    LogDateTime: TDateTime;
+  end;
 var
-  StreamLogHandler: StreamHandler;
-  Log: RTLogger;
-  LogFileHandler: FileHandler;
-  MemoryStream: TMemoryStream;
-  NullLogHandler: NullHandler;
-  ConsoleLogHandler: ConsoleHandler;
-  RecordLogHandler : RecordHandler;
+  LogRecord: TLogRecord;
+  FileRecord: file of TLogRecord;
+  i: byte;
 begin
-  //MemoryStream := TMemoryStream.Create;
-  //StreamLogHandler := StreamHandler.Create('test.log');
-  //StreamLogHandler := StreamHandler.Create(MemoryStream);
-  //LogFileHandler := FileHandler.Create('test.log');
-  //NullLogHandler := NullHandler.Create;
-  //ConsoleLogHandler := ConsoleHandler.Create;
-  RecordLogHandler := RecordHandler.Create;
+  if FileExists('renegade.log') then
+  begin
+    AssignFile(FileRecord, 'renegade.log');
 
-  Log := RTLogger.Create(RecordLogHandler);
+    Reset(FileRecord);
 
-  //Log.Log(LOG_E, 'Test', []);
-  Log.Info('Testing', ['File', True, 'Error', True, 'Extended', 'Extend']);
-  Log.Debug('Debugging', []);
-  Log.Error('Error', []);
+    if IOResult <> 0 then
+    begin
+      Writeln('Error in opening file.');
+      exit;
+    end
+    else
+    begin
+      for i := 0 to FileSize(FileRecord) - 1 do
+      begin
+        Seek(FileRecord, i);
+        Read(FileRecord, LogRecord);
+        with LogRecord do
+        begin
+          Writeln('Message ID     : ', i);
+          Writeln('Process ID     : ', Process);
+          Writeln('Message        : ', Message);
+          Writeln('Log Level      : ', Level);
+          Writeln('Level String   : ', LevelString);
+          Writeln('Datetime       : ', DateTimeToStr(LogDateTime));
+          Writeln('Log Identifier : ', Identifier);
+          Writeln('Log Context    : ', Context, #10#13);
+        end;
+      end;
+    end;
+    Close(FileRecord);
+  end
+  else
+  begin
+    Writeln('File doesn''t exist');
+    exit;
+  end;
 end.

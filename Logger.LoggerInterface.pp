@@ -54,7 +54,8 @@ type
     LOG_WARNING,
     LOG_NOTICE,
     LOG_INFO,
-    LOG_DEBUG);
+    LOG_DEBUG,
+    LOG_UNKNOWN);
 
 const
   LOG_PRIMASK = $07; // Internal Unix Use;
