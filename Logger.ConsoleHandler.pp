@@ -35,34 +35,56 @@
 {$mode objfpc}
 {$codepage utf8}
 {$h+}
+unit Logger.ConsoleHandler;
 
-program LoggerTest;
+interface
 
 uses
   Classes,
-  Renegade.Logger,
-  Logger.SysLogHandler,
-  Logger.StreamHandler,
-  Logger.FileHandler,
-  Logger.NullHandler,
-  Logger.ConsoleHandler;
+  SysUtils,
+  Logger.HandlerInterface;
 
-var
-  StreamLogHandler : StreamHandler;
-  Log: RTLogger;
-  LogFileHandler : FileHandler;
-  MemoryStream : TMemoryStream;
-  NullLogHandler : NullHandler;
-  ConsoleLogHandler : ConsoleHandler;
+type
+  ConsoleHandler = class(TObject, LoggingHandlerInterface)
+    Private
+      LogIdentifier : UTF8String;
+    Public
+      constructor Create();
+      destructor Destroy();
+      function Open(Identifier: UTF8String): boolean;
+      function Close(): boolean;
+      function Write(const LogData: UTF8String): boolean;
+  end;
+
+implementation
+
+constructor ConsoleHandler.Create();
 begin
-  //MemoryStream := TMemoryStream.Create;
-  //StreamLogHandler := StreamHandler.Create('test.log');
-  //StreamLogHandler := StreamHandler.Create(MemoryStream);
-  //LogFileHandler := FileHandler.Create('test.log');
-  //NullLogHandler := NullHandler.Create;
-  ConsoleLogHandler := ConsoleHandler.Create;
-  Log := RTLogger.Create(ConsoleLogHandler);
-  Log.Info('Testing', ['File', True, 'Error', True, 'Extended', 'Extend']);
-  Log.Debug('Debugging', []);
-  Log.Error('Error', []);
+  inherited Create;
+end;
+
+destructor ConsoleHandler.Destroy();
+begin
+  inherited Destroy;
+end;
+
+function ConsoleHandler.Open(Identifier: UTF8String) : boolean;
+begin
+     LogIdentifier := Identifier;
+end;
+
+function ConsoleHandler.Close(): boolean;
+begin
+  Result := True;
+end;
+
+function ConsoleHandler.Write(const LogData: UTF8String): boolean;
+var
+  LogMessage : UTF8String;
+begin
+  LogMessage := Format('%S[%D] %S', [LogIdentifier, GetProcessId(), LogData]);
+  Writeln(LogMessage);
+  Result := True;
+end;
+
 end.

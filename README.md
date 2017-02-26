@@ -11,7 +11,11 @@ uses
   (Logger.HandlerInterface unit)
    to create your own. }
   Logger.SysLogHandler,
-  // or Logger.StreamHandler,
+  // or
+  Logger.StreamHandler,
+  Logger.ConsoleHandler,
+  Logger.FileHandler,
+  Logger.NullHandler,
   //... other units;
 
 var
