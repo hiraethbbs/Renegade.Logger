@@ -104,7 +104,6 @@ begin
   else
   begin
     Formatted := Format('[%s] %s', [ConvertLogErrorToString(LogLevel), Message]);
-
     LoggingHandler.Write(Formatted);
   end;
   LoggingHandler.Close();
