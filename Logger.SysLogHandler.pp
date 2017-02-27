@@ -46,6 +46,7 @@ interface
 
 uses
   Classes,
+  SysUtils,
   Logger.HandlerInterface;
 
 const
@@ -96,6 +97,7 @@ type
   published
     property UnixFacility: longint read FUnixFacility write SetFacility;
   end;
+  EPlatformNotSupported = class(Exception) end;
 
 procedure closelog; cdecl; external;
 procedure openlog(__ident: PChar; __option: longint; __facilit: longint);
@@ -107,11 +109,21 @@ implementation
 
 constructor SysLogHandler.Create(const LoggingFacility: longint);
 begin
+  {$IFDEF WIN}
+     Raise EPlatformNotSupported.Create ('SysLogHandler is not supported under Windows.') at
+     get_caller_addr(get_frame),
+     get_caller_frame(get_frame);
+  {$ENDIF WIN}
   FUnixFacility := LoggingFacility;
 end;
 
 procedure SysLogHandler.SetFacility(const UnixFacility: longint);
 begin
+  {$IFDEF WIN}
+     Raise EPlatformNotSupported.Create ('SysLogHandler is not supported under Windows.') at
+     get_caller_addr(get_frame),
+     get_caller_frame(get_frame);
+  {$ENDIF WIN}
   FUnixFacility := UnixFacility;
 end;
 
