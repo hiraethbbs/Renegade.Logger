@@ -41,12 +41,14 @@
   Program to read data we wrote to renegade.log
   using Logger.RecordHandler.
 }
-program LoggerRecordRead;
+program RecordHandlerReadTest;
 
 uses
   SysUtils,
   Classes;
 
+const
+  LogFile = 'RecordHandlerTest.log';
 type
   TLogRecord = record
     Level: byte;
@@ -57,14 +59,15 @@ type
     Context: string[255];
     LogDateTime: TDateTime;
   end;
+
 var
   LogRecord: TLogRecord;
   FileRecord: file of TLogRecord;
   i: byte;
 begin
-  if FileExists('renegade.log') then
+  if FileExists(LogFile) then
   begin
-    AssignFile(FileRecord, 'renegade.log');
+    AssignFile(FileRecord, LogFile);
 
     Reset(FileRecord);
 
