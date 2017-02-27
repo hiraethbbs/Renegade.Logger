@@ -46,8 +46,19 @@ uses
 type
   LoggingHandlerInterface = interface
     ['{C6E95830-5B13-4A51-BC03-757A3A1C779F}']
+
+    { This method is called to do anything special to
+      open the log, an example would be making a
+      connection to a database or opening a file. }
     function Open(Identifier: UTF8String): boolean;
+
+    { This method is called to do any closing of the log,
+      an example would be closing a database or a file. }
     function Close(): boolean;
+
+    { This method is called to write log data,
+      and example would be inserting database records
+      or writing a line to a file. }
     function Write(const LogData: UTF8String): boolean;
   end;
 

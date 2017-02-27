@@ -35,6 +35,14 @@
 {$mode objfpc}
 {$codepage utf8}
 {$h+}
+{ Namespace Renegade.Logger }
+{ Null Handler Log Class }
+{ This class doesn't do anything. }
+{
+  If you want to implement a logger, but you aren't sure what kind of logger
+  you need, you can implement this.  You could probably also use it for testing
+  purposes
+}
 unit Logger.NullHandler;
 
 interface
@@ -46,12 +54,12 @@ uses
 
 type
   NullHandler = class(TObject, LoggingHandlerInterface)
-    Public
-      constructor Create();
-      destructor Destroy();
-      function Open(Identifier: UTF8String): boolean;
-      function Close(): boolean;
-      function Write(const LogData: UTF8String): boolean;
+  public
+    constructor Create();
+    destructor Destroy();
+    function Open(Identifier: UTF8String): boolean;
+    function Close(): boolean;
+    function Write(const LogData: UTF8String): boolean;
   end;
 
 implementation
@@ -66,7 +74,7 @@ begin
   inherited Destroy;
 end;
 
-function NullHandler.Open(Identifier: UTF8String) : boolean;
+function NullHandler.Open(Identifier: UTF8String): boolean;
 begin
   Result := True;
 end;

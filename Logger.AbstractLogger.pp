@@ -36,6 +36,11 @@
 {$codepage utf8}
 {$h+}
 { namespace Renegade.Logger }
+{ Abstract Logger Class }
+{
+  If you don't need any custom code for the procedures Emergency to Debug
+  you can extend this class and only implement the Log procedure.
+}
 unit Logger.AbstractLogger;
 
 interface
@@ -87,7 +92,7 @@ begin
     LOG_INFO: Result := 'Info';
     LOG_DEBUG: Result := 'Debug';
     else
-      Result := 'Unkown';
+      Result := 'Unknown';
   end;
 end;
 

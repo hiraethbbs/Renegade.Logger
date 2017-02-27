@@ -48,12 +48,12 @@ uses
   Logger.ConsoleHandler;
 
 var
-  StreamLogHandler : StreamHandler;
+  StreamLogHandler: StreamHandler;
   Log: RTLogger;
-  LogFileHandler : FileHandler;
-  MemoryStream : TMemoryStream;
-  NullLogHandler : NullHandler;
-  ConsoleLogHandler : ConsoleHandler;
+  LogFileHandler: FileHandler;
+  MemoryStream: TMemoryStream;
+  NullLogHandler: NullHandler;
+  ConsoleLogHandler: ConsoleHandler;
 begin
   //MemoryStream := TMemoryStream.Create;
   //StreamLogHandler := StreamHandler.Create('test.log');
@@ -62,6 +62,7 @@ begin
   //NullLogHandler := NullHandler.Create;
   ConsoleLogHandler := ConsoleHandler.Create;
   Log := RTLogger.Create(ConsoleLogHandler);
+  Log.Log(LOG_E, 'Test', []);
   Log.Info('Testing', ['File', True, 'Error', True, 'Extended', 'Extend']);
   Log.Debug('Debugging', []);
   Log.Error('Error', []);

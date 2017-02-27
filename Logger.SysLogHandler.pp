@@ -33,28 +33,41 @@
 {  `--- ---'                                            }
 {*******************************************************}
 {$mode objfpc}
-{$interfaces corba}
 {$linklib c}
 {$codepage utf8}
 {$h+}
-
+{
+ Unix System Log Handler.
+ The constructor takes one of the defined Logging Facilities.
+}
 unit Logger.SysLogHandler;
 
 interface
 
 uses
   Classes,
-  FPJson,
   Logger.HandlerInterface;
 
 const
-  LOG_PID = $01;  // log the pid with each message
-  LOG_CONS = $02;  // log on the console if errors in sending
-  LOG_ODELAY = $04;  // delay open until first syslog() (default)
-  LOG_NDELAY = $08;  // don't delay open
-  LOG_NOWAIT = $10;  // don't wait for console forks; (DEPRECATED)
-  LOG_PERROR = $20;  // log to stderr as well
+  // log the pid with each message
+  LOG_PID = $01;
+  // Write directly to system console if there is an error
+  // while sending to system logger.
+  LOG_CONS = $02;
+  // The converse of LOG_NDELAY; opening of the connection is delayed until
+  // syslog() is called. (This is the default, and need not be specified.)
+  LOG_ODELAY = $04;
+  // Open the connection immediately (normally, the connection is opened when
+  // the first message is logged).
+  LOG_NDELAY = $08;
+  // Don't wait for child processes that may have been created while logging
+  // the message. (The GNU C library does not create a child process, so this
+  // option has no effect on Linux.)
+  LOG_NOWAIT = $10;
+  // log to stderr as well
+  LOG_PERROR = $20;
 
+  { Logging Facilities }
   LOG_KERN = 0 shl 3;  // kernel messages
   LOG_USER = 1 shl 3;  // random user-level messages
   LOG_MAIL = 2 shl 3;  // mail system
@@ -77,7 +90,6 @@ type
     procedure SetFacility(const UnixFacility: longint);
   public
     constructor Create(const LoggingFacility: longint);
-
     function Open(Identifier: UTF8String): boolean;
     function Close(): boolean;
     function Write(const LogData: UTF8String): boolean;
@@ -86,7 +98,8 @@ type
   end;
 
 procedure closelog; cdecl; external;
-procedure openlog(__ident: PChar; __option: longint; __facilit: longint); cdecl; external;
+procedure openlog(__ident: PChar; __option: longint; __facilit: longint);
+  cdecl; external;
 function setlogmask(__mask: longint): longint; cdecl; external;
 procedure syslog(__pri: longint; __fmt: PChar; args: array of const); cdecl; external;
 

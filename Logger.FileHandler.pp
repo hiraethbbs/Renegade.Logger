@@ -35,45 +35,52 @@
 {$mode objfpc}
 {$codepage utf8}
 {$h+}
-Unit Logger.FileHandler;
+{ namespace Renegade.Logger }
+{ FileHandler Log Class }
+{
+  This class write a file to the filename passed to the constructor,
+  it just implements the StreamHandler class and passes a filename
+  to the StreamHandler filename constructor.
+}
+unit Logger.FileHandler;
 
 interface
 
-Uses
+uses
   Classes,
   SysUtils,
   Logger.HandlerInterface,
   Logger.StreamHandler;
 
-Type FileHandler = class(StreamHandler, LoggingHandlerInterface)
-    Public
-      constructor Create( const FileName: UTF8String);
-      function Open(Identifier: UTF8String): boolean;
-      function Close(): boolean;
-      function Write(const LogData: UTF8String): boolean;
-end;
+type
+  FileHandler = class(StreamHandler, LoggingHandlerInterface)
+  public
+    constructor Create(const FileName: UTF8String);
+    function Open(Identifier: UTF8String): boolean;
+    function Close(): boolean;
+    function Write(const LogData: UTF8String): boolean;
+  end;
 
 implementation
 
-constructor FileHandler.Create( const FileName: UTF8String);
+constructor FileHandler.Create(const FileName: UTF8String);
 begin
   inherited Create(FileName);
 end;
 
 function FileHandler.Open(Identifier: UTF8String): boolean;
 begin
-   Result := inherited Open(Identifier);
+  Result := inherited Open(Identifier);
 end;
 
-function FileHandler.Close() : boolean;
+function FileHandler.Close(): boolean;
 begin
-   Result := inherited Close;
+  Result := inherited Close;
 end;
 
 function FileHandler.Write(const LogData: UTF8String): boolean;
 begin
-    Result := inherited Write(LogData);
+  Result := inherited Write(LogData);
 end;
 
-End.
-
+end.

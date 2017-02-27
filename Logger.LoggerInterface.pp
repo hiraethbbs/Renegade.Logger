@@ -60,19 +60,46 @@ const
   LOG_PRIMASK = $07; // Internal Unix Use;
 
 type
+  { Every procedure takes an array of const as Context, this is for any
+    extra information that doesn't fit well in the message,
+    (e.g. User id, menu name, etc.) }
   LoggerInterface = interface
     ['{3220524c-fae0-11e6-8b70-9c5c8e742ab6}']
+
+    // Sets the Logging Handler to use.  (e.g. SysLogHandler, FileHandler, etc.)
     procedure SetHandler(Handler: LoggingHandlerInterface);
+
+    // System is unusable
     procedure Emergency(Message: UTF8String; Context: array of const);
+
+    // Action must be taken immediately
     procedure Alert(Message: UTF8String; Context: array of const);
+
+    // Critical conditions
     procedure Critical(Message: UTF8String; Context: array of const);
+
+    // Error conditions
     procedure Error(Message: UTF8String; Context: array of const);
+
+    // Warning conditions
     procedure Warning(Message: UTF8String; Context: array of const);
+
+    // Normal, but significant, condition
     procedure Notice(Message: UTF8String; Context: array of const);
+
+    // Informational message
     procedure Info(Message: UTF8String; Context: array of const);
+
+    // Debug-level message
     procedure Debug(Message: UTF8String; Context: array of const);
+
+    { General logging procedure
+      LogLevel : array of const containing the different log levels
+      Message  : The Log Message }
     procedure Log(LogLevel: LogLevels; Message: UTF8String;
       Context: array of const);
+
+    // Holds the current logging handler.
     property LoggingHandler: LoggingHandlerInterface write SetHandler;
   end;
 
